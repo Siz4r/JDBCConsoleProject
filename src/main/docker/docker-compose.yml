@@ -1,0 +1,15 @@
+version: "3.1"
+
+services:
+  JDBCDB:
+    image: postgres:14.0-alpine
+    container_name: SomeFancyJDBCProjectDatabase
+    ports:
+      - "8080:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=username
+      - POSTGRES_DB=db
+
+volumes:
+  SomeFancyJDBCProjectVolume:
