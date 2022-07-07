@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.person.Person;
+import main.java.person.PersonUpdateInput;
 
 import java.util.Scanner;
 
@@ -54,5 +55,16 @@ public class ConsoleMenu {
         var weight= scanner.nextInt();
 
         return Person.builder().setID(id).setName(name).setWeight(weight).setAge(age).build();
+    }
+
+    public PersonUpdateInput getPersonUpdateInput() {
+        System.out.println("Type new data (If you don't want to change record type -1): ");
+        System.out.println("Age: ");
+        var age= scanner.nextInt();
+
+        System.out.print("Weight: ");
+        var weight= scanner.nextInt();
+
+        return PersonUpdateInput.builder().setAge(age).setWeight(weight).build();
     }
 }

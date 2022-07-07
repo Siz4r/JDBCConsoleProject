@@ -36,6 +36,20 @@ public class SomeFancyJDBCProject {
                         databaseService.findByID(consoleMenu.getNumber());
                     }
                     case 3 -> databaseService.addPerson(consoleMenu.getPerson());
+                    case 4 -> {
+                        System.out.println("Type id: ");
+                        var id = consoleMenu.getNumber();
+                        var input = consoleMenu.getPersonUpdateInput();
+                        databaseService.updatePerson(id, input);
+                    }
+                    case 5 -> {
+                        System.out.println("Type id: ");
+                        databaseService.deleteById(consoleMenu.getNumber());
+                    }
+                    case 6 -> {
+                        databaseService.deleteAll();
+                    }
+                    case 7 -> databaseService.fillPersonsWithRecords();
                     case 8 -> run = false;
                     default -> System.out.println("Choose the right option!");
                 }

@@ -1,9 +1,11 @@
 package main.java;
 
 import main.java.person.Person;
+import main.java.person.PersonUpdateInput;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseService {
     private final Connection con;
@@ -49,6 +51,37 @@ public class DatabaseService {
         }
     }
 
+    public void updatePerson(int ID, PersonUpdateInput personUpdateInput) {
+        try (var statement = con.prepareStatement("UPDATE persons" +
+                " SET age = ?, weight = ? WHERE ID = ?")) {
+            findByID(ID);
+            statement.setInt(1, personUpdateInput.getAge());
+            statement.setInt(2, personUpdateInput.getWeight());
+            statement.setInt(3, ID);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void deleteById(int ID) {
+        try (var statement = con.prepareStatement("DELETE FROM Persons WHERE ID = ?")) {
+            statement.setInt(1, ID);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void deleteAll() {
+        try (var statement = con.prepareStatement("DELETE FROM Persons")) {
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void findByID(int ID) {
         try(var statement = con.prepareStatement("SELECT * FROM Persons" +
                 " WHERE ID = ?")) {
@@ -66,8 +99,21 @@ public class DatabaseService {
                 System.out.println("There is no user with such Id!");
             }
         } catch (SQLException e) {
-            System.out.println("SQLExcetpion while looking for person: " + e.getSQLState());
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void fillPersonsWithRecords() {
+        try (var stmt = con.createStatement()) {
+            stmt.executeUpdate("INSERT INTO Persons" +
+                    "(ID, name, age, weight)" +
+                    "VALUES (1, 'Janek Kowalski', 22, 75)");
+
+            stmt.executeUpdate("INSERT INTO Persons" +
+                    "(ID, name, age, weight)" +
+                    "VALUES (2, 'Marek Marecki', 32, 85)");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 
