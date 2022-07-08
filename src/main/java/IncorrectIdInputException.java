@@ -1,7 +1,7 @@
 package main.java;
 
 public class IncorrectIdInputException extends RuntimeException{
-    public IncorrectIdInputException(String message) {
-        super(message);
+    public IncorrectIdInputException() {
+        super("There is no user with such ID!");
     }
 }

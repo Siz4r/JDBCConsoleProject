@@ -49,6 +49,8 @@ public class PersonRepository {
             statement.setInt(3, person.getAge());
             statement.setInt(4, person.getWeight());
 
+            statement.executeUpdate();
+
             return person.getID();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -58,7 +60,6 @@ public class PersonRepository {
     public int updatePerson(int ID, PersonUpdateInput personUpdateInput) {
         try (var statement = con.prepareStatement("UPDATE persons" +
                 " SET age = ?, weight = ? WHERE ID = ?")) {
-            findByID(ID);
             statement.setInt(1, personUpdateInput.getAge());
             statement.setInt(2, personUpdateInput.getWeight());
             statement.setInt(3, ID);
@@ -96,8 +97,8 @@ public class PersonRepository {
             if (result.next()) {
                 return Optional.of(Person.builder()
                         .setID(result.getInt("ID"))
-                        .setAge(result.getInt("Weight"))
-                        .setWeight(result.getInt("Age"))
+                        .setAge(result.getInt("Age"))
+                        .setWeight(result.getInt("Weight"))
                         .setName(result.getString("Name")).build());
             } else {
                 return Optional.empty();

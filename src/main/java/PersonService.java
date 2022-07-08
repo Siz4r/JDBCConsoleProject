@@ -28,6 +28,11 @@ public class PersonService {
     }
 
     public int updatePerson(int ID, PersonUpdateInput input) {
+        var person = personRepository.findByID(ID).orElseThrow(IncorrectIdInputException::new);
+
+        if (input.getWeight() == -1) input.setWeight(person.getWeight());
+        if (input.getAge() == -1) input.setAge(person.getAge());
+
         return personRepository.updatePerson(ID, input);
     }
 
@@ -38,7 +43,7 @@ public class PersonService {
     }
 
     public PersonIdDto findById(int ID) {
-        var person = personRepository.findByID(ID).orElseThrow(() -> new IncorrectIdInputException("There is no person with such id!"));
+        var person = personRepository.findByID(ID).orElseThrow(IncorrectIdInputException::new);
 
         return new PersonIdDto(person.getName(), person.getAge(), person.getWeight());
     }

@@ -29,12 +29,22 @@ public class SomeFancyJDBCProject {
                 consoleMenu.showAvailableOptions();
                 switch (consoleMenu.getNumber(false)) {
                     case 1 -> personService.findAll().forEach(System.out::println);
-                    case 2 -> System.out.println(personService.findById(consoleMenu.getNumber(true)));
+                    case 2 -> {
+                        try {
+                            System.out.println(personService.findById(consoleMenu.getNumber(true)));
+                        } catch (IncorrectIdInputException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
                     case 3 -> personService.addPerson(consoleMenu.getPerson());
                     case 4 -> {
                         var id = consoleMenu.getNumber(true);
                         var input = consoleMenu.getPersonUpdateInput();
-                        personService.updatePerson(id, input);
+                        try {
+                            personService.updatePerson(id, input);
+                        } catch (IncorrectIdInputException e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
                     case 5 -> personService.deleteByID(consoleMenu.getNumber(true));
                     case 6 -> personService.deleteAll();
