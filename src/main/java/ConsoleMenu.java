@@ -12,13 +12,15 @@ public class ConsoleMenu {
         this.scanner = scanner;
     }
 
-    public int getNumber() {
+    public int getNumber(boolean isID) {
         int option = -1;
         try {
-            while (option == -1) {
-                    option = scanner.nextInt();
-            }
+            while (option < 0) {
 
+                if (isID) System.out.println("Type id: ");
+                option = scanner.nextInt();
+                if (option < 0) System.out.println("Wrong input, type again.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,6 +38,11 @@ public class ConsoleMenu {
         System.out.println("6. Delete all records");
         System.out.println("7. Fill database with basic records");
         System.out.println("8. Exit");
+    }
+
+    public void welcomeMessage() {
+        System.out.println("Welcome to fancy JDBC project! You have got here CRUD " +
+                "and some other operations!");
     }
 
     public Person getPerson() {

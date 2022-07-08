@@ -1,10 +1,10 @@
 package main.java.person;
 
 public class Person {
-    private Integer ID;
+    private int ID;
     private String name;
-    private Integer age;
-    private Integer weight;
+    private int age;
+    private int weight;
 
     public String getName() {
         return name;
@@ -18,7 +18,7 @@ public class Person {
         this.name = name;
     }
 
-    public Integer getAge() {
+    public int getAge() {
         return age;
     }
 
@@ -26,7 +26,7 @@ public class Person {
         this.age = age;
     }
 
-    public Integer getWeight() {
+    public int getWeight() {
         return weight;
     }
 
@@ -34,7 +34,7 @@ public class Person {
         this.weight = weight;
     }
 
-    public Integer getID() {
+    public int getID() {
         return ID;
     }
 

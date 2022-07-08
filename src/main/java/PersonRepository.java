@@ -1,35 +1,45 @@
 package main.java;
 
 import main.java.person.Person;
+import main.java.person.PersonIdDto;
 import main.java.person.PersonUpdateInput;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
-public class DatabaseService {
+public class PersonRepository {
     private final Connection con;
 
-    public DatabaseService(Connection con) {
+    public PersonRepository(Connection con) {
         this.con = con;
         clearDatabase();
         initializeDatabase();
     }
 
-    public void getAll() {
+    public Set<Person> findAll() {
+        var persons = new HashSet<Person>();
         try (var statement = con.prepareStatement("SELECT * FROM Persons")) {
             var result = statement.executeQuery();
 
             while (result.next()) {
-                System.out.println("ID: " + result.getInt("ID")
-                        + ", Name: " +result.getString("Name"));
+                persons.add(Person.builder()
+                        .setID(result.getInt("ID"))
+                        .setName(result.getString("Name"))
+                        .setAge(result.getInt("Age"))
+                        .setWeight(result.getInt("Weight")).build());
             }
+
+            return persons;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    public void addPerson(Person person) {
+    public int addPerson(Person person) {
         try (var statement =
                      con.prepareStatement("INSERT INTO Persons" +
                              " (ID, name, age, weight) " +
@@ -39,29 +49,24 @@ public class DatabaseService {
             statement.setInt(3, person.getAge());
             statement.setInt(4, person.getWeight());
 
-            if (statement.executeUpdate() == 1) {
-                System.out.println("New record added to database!");
-            } else {
-                System.out.println("Error while adding new record to database");
-            }
+            statement.executeUpdate();
 
-
+            return person.getID();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
-    public void updatePerson(int ID, PersonUpdateInput personUpdateInput) {
+    public int updatePerson(int ID, PersonUpdateInput personUpdateInput) {
         try (var statement = con.prepareStatement("UPDATE persons" +
                 " SET age = ?, weight = ? WHERE ID = ?")) {
-            findByID(ID);
             statement.setInt(1, personUpdateInput.getAge());
             statement.setInt(2, personUpdateInput.getWeight());
             statement.setInt(3, ID);
 
-            statement.executeUpdate();
+            return statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,7 +75,7 @@ public class DatabaseService {
             statement.setInt(1, ID);
             statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -78,11 +83,11 @@ public class DatabaseService {
         try (var statement = con.prepareStatement("DELETE FROM Persons")) {
             statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
-    public void findByID(int ID) {
+    public Optional<Person> findByID(int ID) {
         try(var statement = con.prepareStatement("SELECT * FROM Persons" +
                 " WHERE ID = ?")) {
             statement.setInt(1, ID);
@@ -90,16 +95,16 @@ public class DatabaseService {
             var result = statement.executeQuery();
 
             if (result.next()) {
-                System.out.println("Person with id = " + ID);
-                System.out.println(Person.builder()
-                        .setName(result.getString("Name"))
+                return Optional.of(Person.builder()
+                        .setID(result.getInt("ID"))
                         .setAge(result.getInt("Age"))
-                        .setWeight(result.getInt("Weight")).build());
+                        .setWeight(result.getInt("Weight"))
+                        .setName(result.getString("Name")).build());
             } else {
-                System.out.println("There is no user with such Id!");
+                return Optional.empty();
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -113,7 +118,7 @@ public class DatabaseService {
                     "(ID, name, age, weight)" +
                     "VALUES (2, 'Marek Marecki', 32, 85)");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

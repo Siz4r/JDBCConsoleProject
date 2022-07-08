@@ -1,5 +1,1 @@
-Create controller
-Convert console menu to application layer before controller
-Separate JDBC logic from application logic (create service layer)
-Fix printing person data while updating it
 Better exceptions management
