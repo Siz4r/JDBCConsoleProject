@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class SomeFancyJDBCProject {
     private final Connection con;
-    private final PersonRepository personRepository;
+    private final PersonService personService;
     private final Scanner scanner = new Scanner(System.in);
     private final ConsoleMenu consoleMenu = new ConsoleMenu(scanner);
 
@@ -15,7 +15,7 @@ public class SomeFancyJDBCProject {
         try {
             this.con = DriverManager.getConnection("jdbc:postgresql://localhost:8080/db",
                     "username", "password");
-            this.personRepository = new PersonRepository(this.con);
+            this.personService = new PersonService(new PersonRepository(this.con));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -23,33 +23,22 @@ public class SomeFancyJDBCProject {
 
     public void start() {
         try(con) {
-//            loadPostgresDriver();
             var run = true;
-            System.out.println("Welcome to fancy JDBC project! You have got here CRUD " +
-                    "and some other operations!");
+            consoleMenu.welcomeMessage();
             while (run) {
                 consoleMenu.showAvailableOptions();
-                switch (consoleMenu.getNumber()) {
-                    case 1 -> personRepository.getAll();
-                    case 2 -> {
-                        System.out.println("Type id: ");
-                        personRepository.findByID(consoleMenu.getNumber());
-                    }
-                    case 3 -> personRepository.addPerson(consoleMenu.getPerson());
+                switch (consoleMenu.getNumber(false)) {
+                    case 1 -> personService.findAll().forEach(System.out::println);
+                    case 2 -> System.out.println(personService.findById(consoleMenu.getNumber(true)));
+                    case 3 -> personService.addPerson(consoleMenu.getPerson());
                     case 4 -> {
-                        System.out.println("Type id: ");
-                        var id = consoleMenu.getNumber();
+                        var id = consoleMenu.getNumber(true);
                         var input = consoleMenu.getPersonUpdateInput();
-                        personRepository.updatePerson(id, input);
+                        personService.updatePerson(id, input);
                     }
-                    case 5 -> {
-                        System.out.println("Type id: ");
-                        personRepository.deleteById(consoleMenu.getNumber());
-                    }
-                    case 6 -> {
-                        personRepository.deleteAll();
-                    }
-                    case 7 -> personRepository.fillPersonsWithRecords();
+                    case 5 -> personService.deleteByID(consoleMenu.getNumber(true));
+                    case 6 -> personService.deleteAll();
+                    case 7 -> personService.fillDatabase();
                     case 8 -> run = false;
                     default -> System.out.println("Choose the right option!");
                 }
@@ -59,14 +48,4 @@ public class SomeFancyJDBCProject {
             e.printStackTrace();
         }
     }
-//
-//    private void loadPostgresDriver() {
-//        try {
-//            Class.forName("org.postgresql.Driver");
-//
-//        } catch (ClassNotFoundException e) {
-//            System.out.println("Driver hasn't been found!");
-//            e.printStackTrace();
-//        }
-//    }
 }
