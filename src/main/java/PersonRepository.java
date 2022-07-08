@@ -5,12 +5,11 @@ import main.java.person.PersonUpdateInput;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-public class DatabaseService {
+public class PersonRepository {
     private final Connection con;
 
-    public DatabaseService(Connection con) {
+    public PersonRepository(Connection con) {
         this.con = con;
         clearDatabase();
         initializeDatabase();
@@ -29,7 +28,7 @@ public class DatabaseService {
         }
     }
 
-    public void addPerson(Person person) {
+    public int addPerson(Person person) {
         try (var statement =
                      con.prepareStatement("INSERT INTO Persons" +
                              " (ID, name, age, weight) " +
@@ -39,11 +38,7 @@ public class DatabaseService {
             statement.setInt(3, person.getAge());
             statement.setInt(4, person.getWeight());
 
-            if (statement.executeUpdate() == 1) {
-                System.out.println("New record added to database!");
-            } else {
-                System.out.println("Error while adding new record to database");
-            }
+            return statement.executeUpdate();
 
 
         } catch (SQLException e) {

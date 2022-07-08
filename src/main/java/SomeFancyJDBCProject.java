@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class SomeFancyJDBCProject {
     private final Connection con;
-    private final DatabaseService databaseService;
+    private final PersonRepository personRepository;
     private final Scanner scanner = new Scanner(System.in);
     private final ConsoleMenu consoleMenu = new ConsoleMenu(scanner);
 
@@ -15,7 +15,7 @@ public class SomeFancyJDBCProject {
         try {
             this.con = DriverManager.getConnection("jdbc:postgresql://localhost:8080/db",
                     "username", "password");
-            this.databaseService = new DatabaseService(this.con);
+            this.personRepository = new PersonRepository(this.con);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -30,26 +30,26 @@ public class SomeFancyJDBCProject {
             while (run) {
                 consoleMenu.showAvailableOptions();
                 switch (consoleMenu.getNumber()) {
-                    case 1 -> databaseService.getAll();
+                    case 1 -> personRepository.getAll();
                     case 2 -> {
                         System.out.println("Type id: ");
-                        databaseService.findByID(consoleMenu.getNumber());
+                        personRepository.findByID(consoleMenu.getNumber());
                     }
-                    case 3 -> databaseService.addPerson(consoleMenu.getPerson());
+                    case 3 -> personRepository.addPerson(consoleMenu.getPerson());
                     case 4 -> {
                         System.out.println("Type id: ");
                         var id = consoleMenu.getNumber();
                         var input = consoleMenu.getPersonUpdateInput();
-                        databaseService.updatePerson(id, input);
+                        personRepository.updatePerson(id, input);
                     }
                     case 5 -> {
                         System.out.println("Type id: ");
-                        databaseService.deleteById(consoleMenu.getNumber());
+                        personRepository.deleteById(consoleMenu.getNumber());
                     }
                     case 6 -> {
-                        databaseService.deleteAll();
+                        personRepository.deleteAll();
                     }
-                    case 7 -> databaseService.fillPersonsWithRecords();
+                    case 7 -> personRepository.fillPersonsWithRecords();
                     case 8 -> run = false;
                     default -> System.out.println("Choose the right option!");
                 }
